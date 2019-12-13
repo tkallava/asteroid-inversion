@@ -27,4 +27,4 @@ for iii = 1:length(xvec)
 end
 
 % trimming
-NURBS =NURBS(end/4.5:end-end/4.5,:);
+NURBS =NURBS(round(end/4.5):round(end-end/4.5),:);
