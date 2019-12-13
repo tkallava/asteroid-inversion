@@ -1,22 +1,28 @@
-function inverse_problem_mcmc(N, folder, acc)
+function inverse_problem_mcmc(N, folder, acc, frame_freq)
 
 % Function that tries to find the shape of unknown 2D asteroid with MCMC and 
 % creates the animation that visualizes the process
 % 
 % The 'unknown' shape of the 'real' asteroid is randomly chosen 
+% If you have your own asteroid and control points, you can place those here:
+
+control_points = [];
+% for example 
+% control_points = [[.45 0];[.35 .5];[.05 .2];[-.45 .5];[-.45 -.5];[0.05 -.1];[0.25 -.5];[.45 0];[.35 .5];[.05 .2]];
+
 %
 % parameters:
 %   N: number of MCMC iterations
 %   folder: folder, where animation frames are saved
 %   acc: in light curve simulation, the number of light rays
+%   frame_freq: how frequently you want to record a frame 
+%   (every frame_freq:th iteration will be recorded. In addition frame will
+%   be recorded whenever new maximum value likelihood occurs)
 
 rng('shuffle');
 
 %% Burn-in period
 burnin = 1;
-
-%% How frequently frames are recorded
-frame_freq = 40;
 
 %% Prerequisites for asteroid shape
 p=3;
@@ -66,8 +72,10 @@ for eee = 1:3
     ground_truth(iii+eee, 1) = ground_truth(eee, 1);
     ground_truth(iii+eee, 2) = ground_truth(eee, 2);
 end
-% non-convex
-%ground_truth = [[.45 0];[.35 .5];[.05 .2];[-.45 .5];[-.45 -.5];[0.05 -.1];[0.25 -.5];[.45 0];[.35 .5];[.05 .2]];
+
+if ~isempty(control_points)
+    ground_truth = control_points;
+end
 
 gt_shape=NURBSCurve(wvec_gt,tvec_gt,ground_truth,p);
 measurement = lightCurve(acc, 3*pi/4, gt_shape);
@@ -198,8 +206,6 @@ set(gcf,'Color','white');
 set(gcf,'Position',[350 50 800 600])
 im1 = getframe(gcf);
 
-filename = [folder,'frame_',num2str(0),'.png'];
-imwrite(frame2im(im1),filename,'png');
 frame_n = 0;
 %% Iteration rounds
 for kkk = 1:N
@@ -368,7 +374,7 @@ for kkk = 1:N
         set(gcf,'Position',[350 50 800 600])
         im1 = getframe(gcf);
 
-        filename = [folder,'frame_',num2str(frame_n),'.png'];
+        filename = [folder,'/frame_',num2str(frame_n),'.png'];
         imwrite(frame2im(im1),filename,'png');
     end
 end

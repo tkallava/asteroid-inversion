@@ -1,5 +1,5 @@
 
-function proj_lengths = lightCurve(accuracy,angle)
+function proj_lengths = lightCurve(accuracy,angle,shape)
 
 % This function gives the light curve data with a given angle and accuracy
 %
@@ -8,9 +8,6 @@ function proj_lengths = lightCurve(accuracy,angle)
 %   angle:       angle between viewer's direction and light source
 %
 % Tomi Kallava 2017
-
-% get the asteroid data
-load('shape');
 
 % pre-process data
 data = preProc(shape);
@@ -213,11 +210,11 @@ for kkk = 1:50
     % Rotate the asteroid
     data = (rot*data.')';
     
-    disp([num2str(2*kkk),' % completed']);
+    %disp([num2str(2*kkk),' % completed']);
     
 end
 
-save proj_lengths
-plot(proj_lengths)
-text1 = ['Light rays: ',num2str(accuracy)];
-text(30,0.8,text1)
+% save proj_lengths
+% plot(proj_lengths)
+% text1 = ['Light rays: ',num2str(accuracy)];
+% text(30,0.8,text1)
