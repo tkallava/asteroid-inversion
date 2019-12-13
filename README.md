@@ -1,7 +1,7 @@
-# light-curve
-2D-Asteroid Light Curve simulation with Matlab
+# Asteroid light curve simulation and shape reconstruction with Markov Chain Monte Carlo
 
-Instructions:
+
+##2D-Asteroid Light Curve simulation
 
 - Create a shape and save it by running defineShape.m. You can change the shape primarily by changing values of pvec.
   But keep in mind that first 3 values have to be same as last 3 values for curve to be closed. And length of the vector is also important.
@@ -17,3 +17,8 @@ Example usage:
   1. Open defineShape.m
   2. Run it
   3. Call a function lightCurve(30, pi/2) or lightCurve_visual(30, pi/2)
+  
+ ## MCMC simulation
+ 
+ - Simulate MCMC shape reconstruction by running inverse_problem_mcmc.m
+ 
