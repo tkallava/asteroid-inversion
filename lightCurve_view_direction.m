@@ -1,15 +1,14 @@
 
 function proj_lengths = lightCurve_view_direction(accuracy, folder)
 
-% This function gives the light curve data with a given accuracy
-% and this function also visualizes the whole process.
-% Video frames are saved to a given folder
+% This function creates the frames for animating the lightcurve in cases
+% where the light comes from the viewing direction
 %
 % parameters:
 %   accuracy:    accuracy of the measurement (How many light-rays)
-%   angle:       angle between viewer's direction and light source
+%   folder:      folder where to save the animation frames
 %
-% Tomi Kallava 2017
+% Tomi Kallava 2019
 
 % get the asteroid data
 load('shape');
