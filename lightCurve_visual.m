@@ -1,15 +1,15 @@
 
-function proj_lengths = lightCurve_visual(accuracy,angle)
+function proj_lengths = lightCurve_visual(accuracy,angle,folder)
 
 % This function gives the light curve data with a given angle and accuracy
 % and this function also visualizes the whole process.
-% You can also make an animation video by uncommenting the last section
+% Video frames are saved to a given folder
 %
 % parameters:
 %   accuracy:    accuracy of the measurement (How many light-rays)
 %   angle:       angle between viewer's direction and light source
 %
-% Tomi Kallava 2017
+% Tomi Kallava 2019
 
 % get the asteroid data
 load('shape');
@@ -32,7 +32,7 @@ if angle > 2*pi
 end 
 
 % avoid infinities caused by slope being 0 or Inf 
-if angle == 0 | angle == pi/2 | angle == pi | angle == 3*pi/2
+if angle == 0 || angle == pi/2 || angle == pi || angle == 3*pi/2
     angle = angle + 0.001;
 end
 
@@ -40,13 +40,13 @@ end
 slope = tan(angle);
 
 % from which quadrant light is coming towards origin
-if (angle > 0 & angle < pi/2)
+if (angle > 0 && angle < pi/2)
     quad = 1;
-elseif (angle > pi/2 & angle < pi)
+elseif (angle > pi/2 && angle < pi)
     quad = 2;
-elseif (angle > pi & angle < 3*pi/2)
+elseif (angle > pi && angle < 3*pi/2)
     quad = 3;
-elseif (angle > 3*pi/2 & angle < 2*pi)
+elseif (angle > 3*pi/2 && angle < 2*pi)
     quad = 4;
 else
     error('Choose better angle!')
@@ -56,10 +56,9 @@ end
 x1 = linspace(-1,1,100);
 
 % rotation matrix
-rot = [cos(2*pi/50) -sin(2*pi/50);sin(2*pi/50) cos(2*pi/50)];
+rot = [cos(2*pi/100) -sin(2*pi/100);sin(2*pi/100) cos(2*pi/100)];
 
-% lengths of projections
-proj_lengths = zeros(50,1);
+proj_lengths = zeros(100,1);
 
 %%
 % Here begins the loop jungle, where we rotate the asteroid, go through all
@@ -69,30 +68,32 @@ proj_lengths = zeros(50,1);
 % asteroid between two consecutive visible points is also visible. So we'll
 % find out the projection length.
 %
-% Rotate the asteroid full circle in 50 steps
-for kkk = 1:50
-    
-    % the smallest y-coordinate
-    y_min = min(data(:,2));
+% Rotate the asteroid full circle in 100 steps
+for kkk = 1:101
 
-    % first line passes through y1_0 when x=0 with given slope 
-    y1_0 = min(data(:,2)-slope.*data(:,1));
+    % starting point in y-axis
+    y1_0 = -3;
+    
+    % Where the light is reflected
+    y_min = -1;
 
     % line equation of the first line we're gonna go through
     y1 = slope.*x1(:)+y1_0;
     
     % last line passes through y2_0 with given slope 
-    y2_0 = max(data(:,2)-slope.*data(:,1));
+    y2_0 = 3;
 
     % line equation of the last line we're gonna go through
     y2 = slope.*x1(:)+y2_0;    
    
-    if quad == 1 | quad == 2        
+    if quad == 1 || quad == 2        
         % perpendicular line passes through y3_0 with given slope 
-        y3_0 = max(data(:,2)+(1/slope).*data(:,1));        
+        %y3_0 = max(data(:,2)+(1/slope).*data(:,1));    
+        y3_0 = 3;
         % last perpendicular line passes through y4_0 with given slope 
-        y4_0 = min(data(:,2)+(1/slope).*data(:,1));
-    elseif quad == 3 | quad == 4        
+        %y4_0 = min(data(:,2)+(1/slope).*data(:,1));
+        y4_0 = -3;
+    elseif quad == 3 || quad == 4        
         % perpendicular line passes through y3_0 with given slope 
         y3_0 = min(data(:,2)+(1/slope).*data(:,1));        
         % last perpendicular line passes through y4_0 with given slope 
@@ -117,23 +118,36 @@ for kkk = 1:50
     y_line_step = dis/(lines*cos(pi/2-asin(1/sqrt(slope^2+1))));
     y_point_step = dis2/(lines*cos(pi/2-asin(1/sqrt((1/slope)^2+1))));
     
-%    For visualizations    
+    % For visualizations    
     % asteroid figure and settings
     figure(1)
     clf
     subplot(1,2,1)
-    patch(data(:,1),data(:,2),[0.5 0.7 0.7])
+    patch(data(:,1),data(:,2),[0.5 0.5 0.5])
     hold on
     axis([-1 1 -1 1]);
+    set(gca,'visible','off');
+    set(gca,'xtick',[]);
+    %set(gca,'Position',[200 100 450 250]);
+    
     subplot(1,2,2)
-    plot(proj_lengths)
-    axis([0 50 -0.1 1.2]);
-    grid on
-    text1 = ['ANGLE: ',num2str(angle), ' rad'];
-    text(10,1.1,text1)
+    patch(data(:,1),data(:,2),[0.5 0.5 0.5])
+    hold on
+    axis([-1 1 -1 1]);
+    x_projs = linspace(-1,1,length(proj_lengths));
+    plot(x_projs, proj_lengths, 'white', 'LineWidth',2);
+    hold on
+    axis([-1 1 -1 1]);
+    
+    set(gca,'visible','off');
+    set(gca,'xtick',[]);
+    %set(gca,'Position',[650 100 450 250]);
+
     set(gcf,'Color','black');
-    whitebg(1,'k');
-%%
+    set(gcf,'Position',[350 100 800 450])
+    
+    
+
     % Initialations
     % in visible-array we save the coordinates of points, 
     % which reflects a light ray to the viewer. Count keeps track
@@ -143,18 +157,18 @@ for kkk = 1:50
     % outer loop is for lines through asteroid
     for iii = 1:lines-1
 
-        if quad == 1 | quad == 2        
+        if quad == 1 || quad == 2        
             % perpendicular line passes through y3_0 with given slope 
-            y3_0 = max(data(:,2)+(1/slope).*data(:,1));       
-        elseif quad == 3 | quad == 4        
+            % y3_0 = max(data(:,2)+(1/slope).*data(:,1)); 
+            y3_0 = 3;
+
+            
+        elseif quad == 3 || quad == 4        
             % perpendicular line passes through y3_0 with given slope 
             y3_0 = min(data(:,2)+(1/slope).*data(:,1));
         else
             error('something wrong')
         end
-        
-        % line equation of the perpendicular line
-        %y3 = (-1/slope).*x1(:)+y3_0;
         
         % move line
         y1_0 = y1_0 + y_line_step;
@@ -171,13 +185,15 @@ for kkk = 1:50
         % this loop is for points scanning through the light ray
         % the loop runs until the intersection is in the polygon
         % then we check if it reflects to the viewer
-        while(inPolyg==0)
+        lightray_count = 0;
+        while(inPolyg==0 && lightray_count~=350)
             
-%            for visuals             
+            lightray_count = lightray_count + 1;
+            
             subplot(1,2,1)
-            plot(x_int,y_int,'y.')
-            hold on
-
+            plot(x_int,y_int,'y.', 'markersize', 13)
+            
+            %hold on
             % Inside/outside test
             [in,on] = inpolygon(x_int,y_int,data(:,1),data(:,2));
             y_int_tmp = y_int;
@@ -185,36 +201,42 @@ for kkk = 1:50
             %%
             if in == 1 || on == 1
                 inPolyg = 1;
-
                 % this while loop finds out if the light ray reflects to the
                 % viewer
                 obstacle = 0;
                 while obstacle == 0
-                    y_int = y_int - 2*dis/accuracy;
+                    y_int = y_int - .02;
                     [in,on] = inpolygon(x_int,y_int,data(:,1),data(:,2));
+                    
       
                     if in == 1 || on == 1
                         count = count + 1;
                         obstacle = 1;
                     else
+                        subplot(1,2,2)
+                        plot(x_int,y_int,'y.', 'markersize', 13);
+                        hold on
                         if y_int < y_min
                             visible(count,1) = x_int;
                             visible(count,2) = y_int_tmp;
                             
-%                            for visuals
-                            subplot(1,2,1)
-                            plot(x_int,y_int_tmp,'w*')
+                            subplot(1,2,2)
+                            plot(x_int,y_int_tmp,'w*');
+                            plot(x_int,y_min,'w.','markersize', 20);
+                            hold on
+                         
 
                             count = count + 1;
                             obstacle = 1;
                         end
                     end
                 end
+
             else
                 %%
                 % the point is not inside the asteroid yet, so we move on
                 % to the next point of the light ray
-                if quad == 1 | quad == 2
+                if quad == 1 || quad == 2
                     if y3_0 > y4_0
                         y3_0 = y3_0 - y_point_step;
                         x_int = (y3_0 - y1_0)/(1/slope + slope);
@@ -243,29 +265,16 @@ for kkk = 1:50
     
     % Add length of projection to the light curve data
     proj_lengths(kkk) = projLength_visual(visible,data);
-    
     % Rotate the asteroid
     data = (rot*data.')';
     
-    display([num2str(2*kkk),' % completed'])
+    display([num2str(kkk),' % completed'])
     
-%    These are for visuals again
-    pause(0.001)
-    % make sequence of frames for visuals
-    drawnow;
-    F(kkk) = getframe(1);
-
+    ha=get(gcf,'children');
+    set(ha(1),'position',[.55 .1 .4 .8])
+    set(ha(2),'position',[.1 .1 .4 .8])
+    
+    im1 = getframe(gcf);
+    filename = [folder,'/frame_',num2str(kkk),'.png'];
+    imwrite(frame2im(im1),filename,'png');
 end
-
-%% Here you can make an animation video
-%
-% video = VideoWriter('asteroidVideo200.avi','Uncompressed AVI');
-% video.FrameRate = 3;
-% open(video);
-% writeVideo(video,F);
-% close(video)
-% figure(1)
-% clf
-% plot(proj_lengths)
-% grid on
-% saveas(figure(1),'200_rays_curve')
