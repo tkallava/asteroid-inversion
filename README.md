@@ -19,14 +19,14 @@ Example usage:
   
  ## MCMC simulation
  
- - Simulate MCMC shape reconstruction by running function inverse_problem_mcmc(N, folder, acc, frame_freq)
-- parameters:
-            - N: number of MCMC iterations
-            - folder: folder, where animation frames are saved
-            - acc: in light curve simulation, the number of light rays
-            - frame_freq: how frequently you want to record a frame 
-           (every frame_freq:th iteration will be recorded. In addition frame will
-           be recorded whenever new maximum value likelihood occurs)
+- Simulate MCMC shape reconstruction by running function inverse_problem_mcmc(N, folder, acc, frame_freq)
+- Parameters:
+    - N: number of MCMC iterations
+    - folder: folder, where animation frames are saved
+    - acc: in light curve simulation, the number of light rays
+    - frame_freq: how frequently you want to record a frame 
+        (every frame_freq:th iteration will be recorded. In addition frame will 
+        be recorded whenever new maximum value likelihood occurs)
 
 Example:
   1. Create folder for animation frames ie. 'mcmc_frames'
