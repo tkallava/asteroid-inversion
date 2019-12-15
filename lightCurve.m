@@ -6,6 +6,7 @@ function proj_lengths = lightCurve(accuracy,angle,shape)
 % parameters:
 %   accuracy:    accuracy of the measurement (How many light-rays)
 %   angle:       angle between viewer's direction and light source
+%   shape:       shape of the asteroid
 %
 % Tomi Kallava 2017
 

@@ -367,8 +367,7 @@ for kkk = 1:N
         
         plot(x_lik,yfit,'r-.');
         hold on;
-        
-        
+           
         set(gca,'xtick',[]);
         set(gcf,'Color','white');
         set(gcf,'Position',[350 50 800 600])
